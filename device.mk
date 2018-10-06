@@ -109,9 +109,15 @@ PRODUCT_COPY_FILES +=  \
 
 # Camera
 PRODUCT_PACKAGES += \
+    camera.msm8952 \
+    libqomx_core \
+    libmm-qcamera \
+    libmmcamera_interface \
+    libmmjpeg_interface \
     libbson \
     libshims_camera \
     libshims_shoot \
+    mm-qcamera-app \
     Camera2
 
 # Disable camera Treble path
