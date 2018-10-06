@@ -57,7 +57,7 @@ LOCAL_C_INCLUDES := \
         $(LOCAL_PATH)/../mm-image-codec/qexif \
         $(LOCAL_PATH)/../mm-image-codec/qomx_core \
         $(LOCAL_PATH)/util \
-        $(call project-path-for,qcom-media)/mm-core/inc \
+        $(call project-path-for,qcom-media)/mm-core/inc
 
 #HAL 1.0 Include paths
 LOCAL_C_INCLUDES += \
@@ -90,7 +90,8 @@ LOCAL_C_INCLUDES += \
         $(call project-path-for,qcom-display)/libqservice
 LOCAL_SHARED_LIBRARIES := libcamera_client liblog libhardware libutils libcutils libdl
 LOCAL_SHARED_LIBRARIES += libmmcamera_interface libmmjpeg_interface libui libcamera_metadata
-LOCAL_SHARED_LIBRARIES += libqdMetaData libqservice libbinder
+LOCAL_SHARED_LIBRARIES += libqdMetaData libqservice libbinder libnativewindow
+LOCAL_SHARED_LIBRARIES += libhidltransport android.hidl.token@1.0-utils android.hardware.graphics.bufferqueue@1.0
 ifeq ($(TARGET_TS_MAKEUP),true)
 LOCAL_SHARED_LIBRARIES += libts_face_beautify_hal libts_detected_face_hal
 endif
