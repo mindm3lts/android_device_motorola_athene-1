@@ -904,7 +904,6 @@ typedef struct {
     INCLUDE(CAM_INTF_PARM_INSTANT_AEC,                  uint8_t,                     1);
     INCLUDE(CAM_INTF_PARM_INITIAL_EXPOSURE_INDEX,       uint32_t,                    1);
 
-    /*
     INCLUDE(CAM_INTF_PARM_VENDOR_01,                    uint8_t,                     1);
     INCLUDE(CAM_INTF_PARM_VENDOR_02,                    uint8_t,                     1);
     INCLUDE(CAM_INTF_PARM_VENDOR_03,                    uint8_t,                     1);
@@ -935,7 +934,6 @@ typedef struct {
     INCLUDE(CAM_INTF_PARM_VENDOR_28,                    uint8_t,                     1);
     INCLUDE(CAM_INTF_PARM_VENDOR_29,                    uint8_t,                     1);
     INCLUDE(CAM_INTF_PARM_VENDOR_30,                    uint8_t,                     1);
-    */
 } metadata_data_t;
 
 /* Update clear_metadata_buffer() function when a new is_xxx_valid is added to
