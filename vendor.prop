@@ -272,6 +272,12 @@ ro.am.reschedule_service=true
 # XLAT
 persist.net.doxlat=true
 
+#Disable rescue-party
+persist.sys.disable_rescue=true
+
+#Enable softkeys
+qemu.hw.mainkeys=0
+
 #
 # ADDITIONAL_BUILD_PROPERTIES
 #

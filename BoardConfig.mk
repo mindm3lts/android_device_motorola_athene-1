@@ -145,6 +145,8 @@ BOARD_PERSISTIMAGE_PARTITION_SIZE := 28819456     # 28144 * 1024 mmcblk0p30
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 27258650624 # 26619776 * 1024 mmcblk0p48
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_CACHEIMAGE_PARTITION_SIZE := 260014080      # 253920 * 1024 mmcblk0p46
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_VENDORIMAGE_PARTITION_SIZE := 666271744     # 650656 * 1024 mmcblk0p45
 
 # FM
 BOARD_HAVE_QCOM_FM := true
@@ -152,12 +154,11 @@ TARGET_QCOM_NO_FM_FIRMWARE := true
 
 # Shims
 TARGET_LD_SHIM_LIBS := \
-    /system/vendor/lib64/lib-imsvt.so|libshims_ims.so \
-    /system/vendor/lib/libril-qc-qmi-1.so|rild_socket.so \
-    /system/lib/hw/camera.msm8952.so|libshims_camera.so \
-    /system/lib/libandroid.so|libshim_ril.so \
-    /system/lib/libjustshoot.so|libshims_shoot.so \
-    /system/lib/soundfx/libspeakerbundle.so|libshims_speakerbundle.so
+    /vendor/lib64/lib-imsvt.so|/vendor/lib64/libshims_ims.so \
+    /system/lib/hw/camera.msm8952.so|/vendor/lib/libshims_camera.so \
+    /system/lib/libandroid.so|/vendor/lib/libshim_ril.so \
+    /system/lib/libjustshoot.so|/vendor/lib/libshims_shoot.so \
+    /system/lib/soundfx/libspeakerbundle.so|/vendor/lib/libshims_speakerbundle.so
 
 # Init
 TARGET_INIT_VENDOR_LIB := libinit_athene
@@ -186,7 +187,7 @@ DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/configs/manifest.xml
 DEVICE_MATRIX_FILE   := $(DEVICE_PATH)/configs/compatibility_matrix.xml
 
 # Properties
-TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
+TARGET_VENDOR_PROP += $(DEVICE_PATH)/vendor.prop
 
 # Product
 PRODUCT_SHIPPING_API_LEVEL := 23
@@ -217,6 +218,12 @@ TARGET_KEYMASTER_WAIT_FOR_QSEE := true
 # CNE and DPM
 TARGET_LDPRELOAD := libNimsWrap.so
 BOARD_USES_QCNE := true
+
+# Treble
+BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
+PRODUCT_FULL_TREBLE_OVERRIDE := true
+PRODUCT_VENDOR_MOVE_ENABLED := true
+TARGET_COPY_OUT_VENDOR := vendor
 
 # Sensors
 USE_SENSOR_MULTI_HAL := true

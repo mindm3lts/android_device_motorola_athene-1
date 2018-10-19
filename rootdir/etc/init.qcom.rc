@@ -25,8 +25,8 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-import init.qcom.power.rc
-import init.mmi.usb.rc
+import /vendor/etc/init/hw/init.qcom.power.rc
+import /vendor/etc/init/hw/init.mmi.usb.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
@@ -139,7 +139,7 @@ on boot
     chown radio radio /data/vendor/radio/db_check_done
     chmod 0660 /data/vendor/radio/db_check_done
 
-    start rmt_storage
+    start vendor.rmt_storage
 
     # Set graphic node permissions
     chown system graphics /sys/class/graphics/fb0/mdp/bw_mode_bitmap
@@ -313,7 +313,7 @@ on fs
     wait /dev/block/platform/soc.0/${ro.boot.bootdevice}
     symlink /dev/block/platform/soc.0/${ro.boot.bootdevice} /dev/block/bootdevice
     
-    mount_all ./fstab.qcom --early
+    mount_all ./vendor/etc/fstab.qcom --early
 
     wait /dev/block/bootdevice/by-name/dsp
     mount ext4 /dev/block/bootdevice/by-name/dsp /dsp nosuid nodev barrier=1
@@ -327,7 +327,7 @@ on fs
     symlink /persist /pds
 
     wait /dev/block/bootdevice/by-name/hw
-    start oem-hw-sh
+    start vendor.oem-hw-sh
 
 on post-fs
     mkdir /persist/camera 0755 oem_5004 oem_5004
@@ -361,7 +361,7 @@ on post-fs
     chmod 0600 /persist/whisper/whisper_only/vector0.bin
 
 on late-fs
-    mount_all fstab.qcom --late
+    mount_all ./vendor/etc/fstab.qcom --late
 
 on post-fs-data
     mkdir /data/vendor/tombstones 0771 system system
@@ -598,7 +598,7 @@ on property:persist.sys.ssr.enable_ramdumps=0
 on property:sys.boot_completed=1
     start emmc_ffu
     start mbm_spy
-    start mmi-laser-sh
+    start vendor.mmi-laser-sh
     start qe
 
     # CPE fw_name used by sound trigger HAL
@@ -607,7 +607,7 @@ on property:sys.boot_completed=1
     write /dev/kmsg "Boot completed "
 
 on property:persist.radio.atfwd.start=false
-    stop atfwd
+    stop vendor.atfwd
 
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd
@@ -616,19 +616,19 @@ on property:bluetooth.isEnabled=true
     write /sys/class/bluetooth/hci0/idle_timeout 7000
 
 on property:bluetooth.dun.status=running
-    start bt-dun
+    start vendor.bt-dun
 
 on property:bluetooth.dun.status=stopped
-    stop bt-dun
+    stop vendor.bt-dun
 
 on property:ro.bluetooth.ftm_enabled=true
     start ftmd
 
 on property:vold.decrypt=trigger_restart_framework
-    start config_bluetooth
-    start wcnss-service
+    start vendor.config_bluetooth
+    start vendor.wcnss-service
 
-service cnd /system/vendor/bin/cnd
+service vendor.cnd /vendor/bin/cnd
     class main
     socket cnd stream 660 root inet
     group root wakelock
@@ -639,19 +639,19 @@ service dpmd /system/bin/dpmd
     socket dpmd stream 660 root system
     writepid /dev/cpuset/system-background/tasks
 
-service irsc_util /system/vendor/bin/irsc_util "/etc/sec_config"
+service vendor.irsc_util /vendor/bin/irsc_util "/etc/sec_config"
     class main
     user root
     oneshot
 
-service imsqmidaemon /system/vendor/bin/imsqmidaemon
+service vendor.imsqmidaemon /vendor/bin/imsqmidaemon
     class main
     user system
     socket ims_qmid stream 0660 system radio
     group radio log diag
     writepid /dev/cpuset/system-background/tasks
 
-service imsdatadaemon /system/vendor/bin/imsdatadaemon
+service vendor.imsdatadaemon /vendor/bin/imsdatadaemon
     class main
     user system
     socket ims_datad stream 0660 system radio
@@ -660,9 +660,9 @@ service imsdatadaemon /system/vendor/bin/imsdatadaemon
     disabled
 
 on property:vendor.ims.QMI_DAEMON_STATUS=1
-    start imsdatadaemon
+    start vendor.imsdatadaemon
 
-service rmt_storage /system/vendor/bin/rmt_storage
+service vendor.rmt_storage /vendor/bin/rmt_storage
     class core
     user root
     group system wakelock
@@ -670,7 +670,7 @@ service rmt_storage /system/vendor/bin/rmt_storage
     shutdown critical
     writepid /dev/cpuset/system-background/tasks
 
-service ims_rtp_daemon /system/vendor/bin/ims_rtp_daemon
+service vendor.ims_rtp_daemon /vendor/bin/ims_rtp_daemon
     class main
     user system
     socket ims_qmid stream 0660 system radio
@@ -679,7 +679,7 @@ service ims_rtp_daemon /system/vendor/bin/ims_rtp_daemon
     group radio diag inet log
     disabled
 
-service imsrcsservice /system/vendor/bin/imsrcsd
+service vendor.imsrcsservice /vendor/bin/imsrcsd
     class main
     user system
     group radio diag inet log
@@ -687,10 +687,10 @@ service imsrcsservice /system/vendor/bin/imsrcsd
     disabled
 
 on property:vendor.ims.DATA_DAEMON_STATUS=1
-    start ims_rtp_daemon
-    start imsrcsservice
+    start vendor.ims_rtp_daemon
+    start vendor.imsrcsservice
 
-service tftp_server /system/vendor/bin/tftp_server
+service vendor.tftp_server /vendor/bin/tftp_server
     class main
     user root
     writepid /dev/cpuset/system-background/tasks
@@ -713,13 +713,13 @@ service hci_filter_root /system/bin/wcnss_filter
     group bluetooth diag oem_2950
     disabled
  
-service config_bluetooth /system/bin/sh /init.qcom.bt.sh "onboot"
+service vendor.config_bluetooth /vendor/bin/sh /vendor/etc/init.qcom.bt.sh "onboot"
     class core
     user bluetooth
     group bluetooth system
     oneshot
 
-service hciattach /system/bin/sh /system/etc/init.qcom.bt.sh
+service vendor.hciattach /vendor/bin/sh /vendor/etc/init.qcom.bt.sh
     class late_start
     user bluetooth
     group bluetooth net_bt_admin
@@ -727,12 +727,12 @@ service hciattach /system/bin/sh /system/etc/init.qcom.bt.sh
     oneshot
 
 on property:bluetooth.hciattach=true
-    start hciattach
+    start vendor.hciattach
 
 on property:bluetooth.hciattach=false
     setprop bluetooth.status off
 
-service bt-dun /system/bin/dun-server /dev/smd7 /dev/rfcomm0
+service vendor.bt-dun /vendor/bin/dun-server /dev/smd7 /dev/rfcomm0
     class late_start
     user bluetooth
     group bluetooth net_bt_admin inet
@@ -746,7 +746,7 @@ service btsnoop /system/bin/btsnoop
    disabled
    oneshot
 
-service port-bridge /system/bin/port-bridge /dev/mhi_pipe_32 /dev/ttyGS0
+service vendor.port-bridge /vendor/bin/port-bridge /dev/mhi_pipe_32 /dev/ttyGS0
     class main
     user radio system
     group radio system inet
@@ -754,13 +754,13 @@ service port-bridge /system/bin/port-bridge /dev/mhi_pipe_32 /dev/ttyGS0
     oneshot
 
 # QMUX must be in multiple groups to support external process connections
-service qmuxd /system/bin/qmuxd
+service vendor.qmuxd /vendor/bin/qmuxd
     class main
     user root
     group radio audio bluetooth gps nfc diag wakelock
     writepid /dev/cpuset/system-background/tasks
 
-service netmgrd /system/vendor/bin/netmgrd
+service vendor.netmgrd /vendor/bin/netmgrd
     class main
     user root
     group radio system wakelock
@@ -778,7 +778,7 @@ service ipacm /system/bin/ipacm
     group net_admin inet
     writepid /dev/cpuset/system-background/tasks
 
-service vendor.qti /system/vendor/bin/qti
+service vendor.qti /vendor/bin/qti
     class main
     user radio
     group radio net_raw oem_2950 usb net_admin
@@ -787,7 +787,7 @@ service vendor.qti /system/vendor/bin/qti
 
 on property:ro.use_data_netmgrd=false
     # netmgr not supported on specific target
-    stop netmgrd
+    stop vendor.netmgrd
 
 # Adjust socket buffer to enlarge TCP receive window for high bandwidth
 # but only if ro.data.large_tcp_window_size property is set.
@@ -820,7 +820,7 @@ service ptt_ffbm /system/bin/ptt_socket_app -f -d
     disabled
     oneshot
 
-service cnss_diag /system/bin/cnss_diag -q
+service vendor.cnss_diag /vendor/bin/cnss_diag -q
     class late_start
     user root
     group root
@@ -829,7 +829,7 @@ service cnss_diag /system/bin/cnss_diag -q
 service cnss-daemon /system/bin/cnss-daemon -n -l
     class late_start
 
-service loc_launcher /system/bin/loc_launcher
+service vendor.loc_launcher /vendor/bin/loc_launcher
     #loc_launcher will start as root and set its uid to gps
     class late_start
     group gps inet net_raw oem_2950 net_admin wifi
@@ -841,7 +841,7 @@ on property:hw.fm.init=1
 on property:hw.fm.init=0
     write /sys/module/radio_iris_transport/parameters/fmsmd_set 0
 
-service atfwd /system/bin/ATFWD-daemon
+service vendor.atfwd /vendor/bin/ATFWD-daemon
     class late_start
     user system
     group system radio
@@ -878,76 +878,76 @@ service diag_mdlog_stop /system/bin/diag_mdlog -k
     disabled
     oneshot
 
-service vendor.qseeproxydaemon /system/vendor/bin/qseeproxydaemon
+service vendor.qseeproxydaemon /vendor/bin/qseeproxydaemon
     class late_start
     user system
     group system
 
 # Start Sensor daemon
-service vendor.motosh /system/vendor/bin/motosh boot
+service vendor.motosh /vendor/bin/motosh boot
     class late_start
     user compass
     group compass misc input
     oneshot
 
-service mmi-boot-sh /init.mmi.boot.sh
+service vendor.mmi-boot-sh /vendor/bin/sh /vendor/etc/init.mmi.boot.sh
     class core
     user root
     oneshot
 
-service mmi-laser-sh  /init.mmi.laser.sh
-    class core
-    user root
-    oneshot
-    disabled
-
-service mmi-touch-sh /system/bin/sh /init.mmi.touch.sh
-    class core
-    user root
-    oneshot
-
-service oem-hw-sh /init.oem.hw.sh
+service vendor.mmi-laser-sh /vendor/bin/sh /vendor/etc/init.mmi.laser.sh
     class core
     user root
     oneshot
     disabled
 
-service touch-dead-sh /init.oem.hw.sh -f
+service vendor.mmi-touch-sh /vendor/bin/sh /vendor/etc/init.mmi.touch.sh
+    class core
+    user root
+    oneshot
+
+service vendor.oem-hw-sh /vendor/bin/sh /vendor/etc/init.oem.hw.sh
+    class core
+    user root
+    oneshot
+    disabled
+
+service vendor.touch-dead-sh /vendor/bin/sh /vendor/etc/init.oem.hw.sh -f
     class main
     user root
     oneshot
     disabled
 
-service touch-ready-sh /init.oem.hw.sh -r
+service vendor.touch-ready-sh /vendor/bin/sh /vendor/etc/init.oem.hw.sh -r
     class main
     user root
     oneshot
     disabled
 
-service oem-hw-config-sh /init.oem.hw.sh -p
+service vendor.oem-hw-config-sh /vendor/etc/init.oem.hw.sh -p
     class main
     user root
     oneshot
     disabled
 
-service msm_irqbalance /vendor/bin/msm_irqbalance -f /vendor/etc/msm_irqbalance.conf
+service vendor.msm_irqbalance /vendor/bin/msm_irqbalance -f /vendor/etc/msm_irqbalance.conf
     class core
     user root
     group root
     disabled
 
 on property:hw.touch.status="dead"
-    # start touch-dead-sh
+    # start vendor.touch-dead-sh
 
 on property:hw.touch.status="ready"
-    # start touch-ready-sh
+    # start vendor.touch-ready-sh
 
-service charge_only_mode /system/bin/charge_only_mode
+service vendor.charge_only_mode /vendor/bin/charge_only_mode
     user root
     group graphics system input
     disabled
 
-service ftmipcd /system/bin/ftmipcd
+service vendor.ftmipcd /vendor/bin/ftmipcd
     user radio
     group radio net_raw inet diag
     disabled
@@ -967,10 +967,10 @@ on property:persist.qe.trigger=1
     start qe_broadcast
 
 on property:ro.bootmode=factory
-    start ftmipcd
+    start vendor.ftmipcd
 
 on property:ro.bootmode=mot-factory
-    start ftmipcd
+    start vendor.ftmipcd
 
 on property:persist.mot.demo_mode_charging=1
     write /sys/class/power_supply/battery/device/force_demo_mode 1
@@ -992,7 +992,7 @@ on property:ro.debuggable=1
     # enable group read/write to /dev/log/kernel
     chmod 0660 /dev/log/kernel
 
-service hw_revs /system/bin/hardware_revisions.sh
+service vendor.hw_revs /vendor/bin/hardware_revisions.sh
     class late_start
     user system
     group system
@@ -1003,7 +1003,7 @@ service dropboxd /system/bin/dropboxd
     user diag
     group diag
 
-service vendor.thermal-com /system/vendor/bin/thermal-engine --minimode
+service vendor.thermal-com /vendor/bin/thermal-engine --minimode
     class main
     user root
     disabled
@@ -1041,7 +1041,7 @@ service setup_shutdown /system/bin/setup_shutdown.sh
    oneshot
 
 #start camera server as daemon
-service qcamerasvr /system/bin/mm-qcamera-daemon
+service vendor.qcamerasvr /vendor/bin/mm-qcamera-daemon
    class late_start
    user camera
    group camera system inet input graphics
@@ -1054,30 +1054,30 @@ on property:persist.usb.chgdisabled=1
 on property:persist.usb.chgdisabled=0
     write /sys/class/power_supply/battery/charging_enabled 1
 
-service adsprpcd /system/bin/adsprpcd
+service vendor.adsprpcd /vendor/bin/adsprpcd
     class main
     user media
     group media
 
-service per_mgr /system/bin/pm-service
+service vendor.per_mgr /vendor/bin/pm-service
     class core
     user system
     group system
     writepid /dev/cpuset/system-background/tasks
 
-service per_proxy /system/vendor/bin/pm-proxy
+service vendor.per_proxy /vendor/bin/pm-proxy
     class core
     user system
     group system
     disabled
 
 on property:init.svc.per_mgr=running
-    start per_proxy
+    start vendor.per_proxy
 
 on property:sys.shutdown.requested=*
-    stop per_proxy
+    stop vendor.per_proxy
 
-service vendor.ppd /system/vendor/bin/mm-pp-daemon
+service vendor.ppd /vendor/bin/mm-pp-daemon
     class late_start
     disabled
     user system
@@ -1090,26 +1090,26 @@ on property:init.svc.surfaceflinger=stopped
 on property:init.svc.surfaceflinger=running
     start vendor.ppd
 
-service wcnss-service /system/bin/wcnss_service
+service vendor.wcnss-service /vendor/bin/wcnss_service
     class main
     user system
     group system wifi radio
     oneshot
 
-service vendor.qseecomd /system/vendor/bin/qseecomd
+service vendor.qseecomd /vendor/bin/qseecomd
     class core
     user root
     group root
     writepid /dev/cpuset/system-background/tasks
 
-service vendor.perfd /system/vendor/bin/perfd
+service vendor.perfd /vendor/bin/perfd
    class main
    user root
    socket perfd seqpacket 0666 root system
    disabled
    writepid /dev/cpuset/system-background/tasks
 
-service vendor.thermal-engine /system/vendor/bin/thermal-engine
+service vendor.thermal-engine /vendor/bin/thermal-engine
     class main
     user root
     socket thermal-send-client stream 0666 system system
@@ -1119,13 +1119,13 @@ service vendor.thermal-engine /system/vendor/bin/thermal-engine
     group root
     writepid /dev/cpuset/system-background/tasks
 
-service vendor.time_daemon /system/vendor/bin/time_daemon
+service vendor.time_daemon /vendor/bin/time_daemon
     class late_start
     user root
     group root
     writepid /dev/cpuset/system-background/tasks
 
-service audiod /system/bin/audiod
+service vendor.audiod /vendor/bin/audiod
     class late_start
     user system
     group system
@@ -1147,7 +1147,7 @@ on charger
 
 on moto-charger
     setprop ro.board.platform msm8952
-    start charge_only_mode
+    start vendor.charge_only_mode
     start vendor.thermal-com
 
 on property:sys.boot_completed=1

@@ -16,8 +16,11 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
+
 LOCAL_SRC_FILES := MediaBuffer.cpp
 LOCAL_SHARED_LIBRARIES  := libui libgui libstagefright_foundation
 LOCAL_MODULE := libshims_ims
 LOCAL_MODULE_TAGS := optional
+LOCAL_VENDOR_MODULE := true
+
 include $(BUILD_SHARED_LIBRARY)

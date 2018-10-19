@@ -16,7 +16,10 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
+
 LOCAL_SRC_FILES := SensorEventQueue.cpp
 LOCAL_MODULE := libshims_speakerbundle
 LOCAL_MODULE_TAGS := optional
+LOCAL_VENDOR_MODULE := true
+
 include $(BUILD_SHARED_LIBRARY)
