@@ -1,3 +1,5 @@
 subdirs = [
     "libhidl",
+    "services/camera_provider",
 ]
+	
