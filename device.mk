@@ -113,6 +113,7 @@ PRODUCT_PACKAGES += \
     libbson \
     libshims_camera \
     libshims_shoot \
+    camera.msm8952 \
     Camera2
 
 # Disable camera Treble path
